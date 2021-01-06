@@ -12,6 +12,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -37,6 +38,18 @@ public class UserService {
         Iterable<User> userIterable = () -> users
                 .stream()
                 .map(UserDTO::to)
+                .map(userDTO -> {
+
+                    if (userDTO.getCreatedBy() == null) {
+                        userDTO.setCreatedBy("ADMIN");
+                    }
+
+                    if (userDTO.getCreatedAt() == null) {
+                        userDTO.setCreatedAt(LocalDateTime.now());
+                    }
+
+                    return userDTO;
+                })
                 .iterator();
 
         return this.userRepository.saveAll(userIterable)

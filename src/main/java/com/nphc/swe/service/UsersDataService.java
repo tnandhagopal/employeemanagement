@@ -16,6 +16,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.Reader;
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -88,6 +89,13 @@ public class UsersDataService {
                 .isPresent()) {
             throw new UserCreationException("Employee login not unique");
         }
+
+        existsUserByLogin.ifPresent(userDTO -> {
+            user.setCreatedAt(userDTO.getCreatedAt());
+            user.setCreatedBy(userDTO.getCreatedBy());
+            user.setUpdatedBy("ADMIN");
+            user.setUpdatedAt(LocalDateTime.now());
+        });
 
         return this.userService.save(user);
     }
