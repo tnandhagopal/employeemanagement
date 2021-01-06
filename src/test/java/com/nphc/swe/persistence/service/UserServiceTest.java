@@ -144,6 +144,9 @@ class UserServiceTest {
         assertThat(this.userService.findAll(0, 2, "id")).containsExactly(user1, user2);
         assertThat(this.userService.findAll(1, 2, "id")).containsExactly(user3, user4);
 
+        assertThat(this.userService.findAll(1, 0, "id")).containsExactly(user1, user2, user3, user4);
+
+
     }
 
 
@@ -152,6 +155,8 @@ class UserServiceTest {
         save();
         assertThat(this.userService.findByFilters(BigDecimal.ZERO, BigDecimal.valueOf(4000), 0, 2, "id")).containsExactly(user1, user3);
         assertThat(this.userService.findByFilters(BigDecimal.ZERO, BigDecimal.valueOf(4000), 1, 2, "id")).containsExactly(user4);
+
+        assertThat(this.userService.findByFilters(BigDecimal.ZERO, BigDecimal.valueOf(4000), 1, 0, "id")).containsExactly(user1, user3, user4);
 
     }
 

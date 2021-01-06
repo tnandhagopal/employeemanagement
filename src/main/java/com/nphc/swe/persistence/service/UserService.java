@@ -62,6 +62,16 @@ public class UserService {
     }
 
     public List<UserDTO> findAll(Integer pageNo, Integer pageSize, String sortBy) {
+
+        Sort sort = Sort.by(Sort.Direction.ASC, sortBy);
+
+        if (pageSize < 1) {
+            return this.userRepository.findAll(sort)
+                    .stream()
+                    .map(UserDTO::from)
+                    .collect(Collectors.toList());
+        }
+
         Pageable paging = PageRequest.of(pageNo, pageSize, Sort.by(sortBy));
 
         Page<User> pagedResult = this.userRepository.findAll(paging);
@@ -78,14 +88,26 @@ public class UserService {
                                        Integer pageNo,
                                        Integer pageSize,
                                        String sortBy) {
-        Pageable paging = PageRequest.of(pageNo, pageSize, Sort.by(sortBy));
+
+        Sort sort = Sort.by(Sort.Direction.ASC, sortBy);
+
+        if (pageSize < 1) {
+            return this.userRepository.findBySalaryBetween(sort, minSalary, maxSalary)
+                    .stream()
+                    .map(UserDTO::from)
+                    .collect(Collectors.toList());
+        }
+
+        Pageable paging = PageRequest.of(pageNo, pageSize, sort);
 
         Page<User> pagedResult = this.userRepository.findBySalaryBetween(paging, minSalary, maxSalary);
 
         if (pagedResult.hasContent()) {
-            return pagedResult.getContent().stream().map(UserDTO::from).collect(Collectors.toList());
+            return pagedResult.getContent()
+                    .stream()
+                    .map(UserDTO::from)
+                    .collect(Collectors.toList());
         } else {
-
             return new ArrayList<>();
         }
     }
