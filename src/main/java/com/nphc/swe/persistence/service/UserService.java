@@ -4,9 +4,15 @@ import com.nphc.swe.model.dto.UserDTO;
 import com.nphc.swe.persistence.entity.User;
 import com.nphc.swe.persistence.repo.UserRepository;
 import lombok.extern.apachecommons.CommonsLog;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -54,4 +60,35 @@ public class UserService {
     public void delete(String id) {
         this.userRepository.deleteById(id);
     }
+
+    public List<UserDTO> findAll(Integer pageNo, Integer pageSize, String sortBy) {
+        Pageable paging = PageRequest.of(pageNo, pageSize, Sort.by(sortBy));
+
+        Page<User> pagedResult = this.userRepository.findAll(paging);
+
+        if (pagedResult.hasContent()) {
+            return pagedResult.getContent().stream().map(UserDTO::from).collect(Collectors.toList());
+        } else {
+            return new ArrayList<>();
+        }
+    }
+
+    public List<UserDTO> findByFilters(BigDecimal minSalary,
+                                       BigDecimal maxSalary,
+                                       Integer pageNo,
+                                       Integer pageSize,
+                                       String sortBy) {
+        Pageable paging = PageRequest.of(pageNo, pageSize, Sort.by(sortBy));
+
+        Page<User> pagedResult = this.userRepository.findBySalaryBetween(paging, minSalary, maxSalary);
+
+        if (pagedResult.hasContent()) {
+            return pagedResult.getContent().stream().map(UserDTO::from).collect(Collectors.toList());
+        } else {
+
+            return new ArrayList<>();
+        }
+    }
+
+
 }

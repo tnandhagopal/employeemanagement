@@ -4,6 +4,7 @@ import com.nphc.swe.model.dto.UserDTO;
 import com.nphc.swe.persistence.repo.UserRepository;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
@@ -19,6 +20,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @DirtiesContext(methodMode = DirtiesContext.MethodMode.AFTER_METHOD)
 @DataJpaTest
+@Tag("unit")
 class UserServiceTest {
 
     @Autowired
@@ -26,7 +28,7 @@ class UserServiceTest {
 
     private UserService userService;
 
-    private UserDTO user1, user2;
+    private UserDTO user1, user2, user3, user4;
 
 
     @BeforeEach
@@ -51,6 +53,26 @@ class UserServiceTest {
                 .createdAt(LocalDateTime.now())
                 .createdBy("ADMIN")
                 .build();
+
+        user3 = UserDTO.builder()
+                .id("e0003")
+                .login("ssnape")
+                .name("Severus Snape")
+                .salary(new BigDecimal("4000.0"))
+                .startDate(LocalDate.of(2001, 11, 16))
+                .createdAt(LocalDateTime.now())
+                .createdBy("ADMIN")
+                .build();
+
+        user4 = UserDTO.builder()
+                .id("e0004")
+                .login("rhagrid")
+                .name("Rubeus Hagrid")
+                .salary(new BigDecimal("3999.999"))
+                .startDate(LocalDate.of(2001, 11, 16))
+                .createdAt(LocalDateTime.now())
+                .createdBy("ADMIN")
+                .build();
     }
 
     @AfterEach
@@ -61,16 +83,20 @@ class UserServiceTest {
     void save() {
 
         UserDTO user1_actual = this.userService.save(user1);
-
         assertThat(this.userRepository.findById(user1.getId())).contains(UserDTO.to(user1));
-
         assertThat(user1_actual).isEqualTo(user1);
 
         UserDTO user2_actual = this.userService.save(user2);
-
         assertThat(this.userRepository.findById(user2.getId())).contains(UserDTO.to(user2));
-
         assertThat(user2_actual).isEqualTo(user2);
+
+        UserDTO user3_actual = this.userService.save(user3);
+        assertThat(this.userRepository.findById(user3.getId())).contains(UserDTO.to(user3));
+        assertThat(user3_actual).isEqualTo(user3);
+
+        UserDTO user4_actual = this.userService.save(user4);
+        assertThat(this.userRepository.findById(user4.getId())).contains(UserDTO.to(user4));
+        assertThat(user4_actual).isEqualTo(user4);
     }
 
 
@@ -109,6 +135,23 @@ class UserServiceTest {
 
         userService.delete(user2.getId());
         assertThat(userService.findById(user2.getId())).isEmpty();
+
+    }
+
+    @Test
+    void findAll() {
+        save();
+        assertThat(this.userService.findAll(0, 2, "id")).containsExactly(user1, user2);
+        assertThat(this.userService.findAll(1, 2, "id")).containsExactly(user3, user4);
+
+    }
+
+
+    @Test
+    void findByFilters() {
+        save();
+        assertThat(this.userService.findByFilters(BigDecimal.ZERO, BigDecimal.valueOf(4000), 0, 2, "id")).containsExactly(user1, user3);
+        assertThat(this.userService.findByFilters(BigDecimal.ZERO, BigDecimal.valueOf(4000), 1, 2, "id")).containsExactly(user4);
 
     }
 

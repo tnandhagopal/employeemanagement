@@ -6,10 +6,7 @@ import com.nphc.swe.model.UsersDataResponse;
 import com.nphc.swe.model.dto.UserDTO;
 import com.nphc.swe.service.UsersDataService;
 import lombok.extern.apachecommons.CommonsLog;
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Nested;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.*;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
@@ -33,6 +30,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @WebMvcTest(controllers = UsersController.class)
 @CommonsLog
+@Tag("unit")
 class UsersControllerTest {
 
     @Autowired
@@ -128,6 +126,7 @@ class UsersControllerTest {
                     eq(100));
         }
 
+        @Disabled
         @Test
         void bad_parameters() throws Exception {
             when(usersDataService.getUsers(any(), any(), any(), any())).thenReturn(users);

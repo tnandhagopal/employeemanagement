@@ -64,9 +64,8 @@ class UsersDataServiceTest {
 
         this.usersDataService.upload(file);
 
-        Mockito.verify(userService, Mockito.times(10)).save(any());
-        Mockito.verify(userService, Mockito.times(1)).save(eq(user1));
-        Mockito.verify(userService, Mockito.times(1)).save(eq(user2));
+        Mockito.verify(userService, Mockito.times(1)).saveAll(any());
+
 
     }
 }

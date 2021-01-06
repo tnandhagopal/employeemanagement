@@ -16,7 +16,6 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.Reader;
 import java.math.BigDecimal;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -51,7 +50,7 @@ public class UsersDataService {
                                       Integer limit) {
 
         return UsersDataResponse.builder()
-                .results(new ArrayList<>())
+                .results(this.userService.findByFilters(minSalary, maxSalary, offset, limit, "id"))
                 .build();
     }
 
